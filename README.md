@@ -15,9 +15,9 @@ pip install -e .
 ```
 
 Verified working versions: Python 3.12, `torch` 2.9 (GPU), `transformers`
-4.49, `networkx` 3.3. Notably **`peft` and `python-louvain` are NOT
+4.49, `networkx` 3.3. Notably **`peft` and `python-leiden` are NOT
 required** — the MoE-LoRA layers are implemented from scratch and community
-detection uses networkx's built-in `louvain_communities` (see
+detection uses networkx's built-in `leiden_communities` (see
 `requirements.txt` for the full rationale).
 
 ## Running the pipeline
