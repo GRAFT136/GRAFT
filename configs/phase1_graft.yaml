@@ -1,0 +1,55 @@
+description: "Phase 1: full 3-stage GRAFT pipeline (Graph Preprocessing, Expert Warmup, Joint Optimization) on Cora"
+
+base_model: "meta-llama/Meta-Llama-3.1-8B-Instruct"
+
+graph:
+  type: cora
+  data_dir: "data/cora_dataset"
+
+partition:
+  method: louvain
+  min_community_size: 10
+  seed: 42
+
+nnp:
+  d_max: 32
+  delimiter: " | "
+
+gnn:
+  hidden_dim: 256
+  out_dim: 256
+  num_layers: 2
+  pretrain_epochs: 50
+  lr: 1.0e-2
+
+moe_lora:
+  target_modules: ["gate_proj", "up_proj", "down_proj"]
+  rank: 16
+  alpha: 32.0
+  num_communities: 12
+  use_global_expert: true
+  router:
+    routing_dim: 128
+    top_kappa: 2
+
+train:
+  warmup:
+    global_epochs: 2
+    expert_epochs: 2
+    batch_size: 4
+    lr: 5.0e-4
+  joint:
+    epochs: 3
+    batch_size: 4
+    lr: 5.0e-4
+    alpha: 1.0
+    beta: 0.01
+  max_length: 512
+  grad_clip: 1.0
+  seed: 42
+  output_dir: "outputs/phase1"
+
+eval:
+  router_probe: true
+  monitor_collapse: true
+  output_dir: "outputs/phase1"

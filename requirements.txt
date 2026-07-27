@@ -1,0 +1,12 @@
+
+torch>=2.1
+transformers>=4.44
+accelerate
+networkx>=3.2
+numpy
+scipy
+pandas
+pyyaml
+tqdm
+pytest
+

@@ -1,0 +1,60 @@
+description: "Phase 0: self-contained synthetic-graph smoke test of the full GRAFT pipeline"
+
+base_model: "Qwen/Qwen2.5-0.5B-Instruct"
+
+graph:
+  type: synthetic_sbm
+  num_communities: 8
+  nodes_per_community: 40
+  p_in: 0.15
+  p_out: 0.01
+  bridge_edges: 40
+  seed: 42
+  output_path: "data/synthetic_sbm_c8.json"
+
+partition:
+  method: ground_truth
+  min_community_size: 5
+
+nnp:
+  d_max: 16
+  delimiter: " | "
+
+gnn:
+  hidden_dim: 64
+  out_dim: 64
+  num_layers: 2
+  pretrain_epochs: 20
+  lr: 1.0e-2
+
+moe_lora:
+  target_modules: ["gate_proj", "up_proj", "down_proj"]
+  rank: 8
+  alpha: 16.0
+  num_communities: 8
+  use_global_expert: true
+  router:
+    routing_dim: 64
+    top_kappa: 2
+
+train:
+  warmup:
+    global_epochs: 1
+    expert_epochs: 1
+    batch_size: 4
+    lr: 1.0e-3
+  joint:
+    epochs: 1
+    batch_size: 4
+    lr: 1.0e-3
+    alpha: 1.0
+    beta: 0.01
+  max_length: 128
+  grad_clip: 1.0
+  seed: 42
+  output_dir: "outputs/phase0"
+
+eval:
+  router_probe: true
+  monitor_collapse: true
+  output_dir: "outputs/phase0"
